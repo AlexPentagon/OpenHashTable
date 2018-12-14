@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <GridPane alignment="center" hgap="10" vgap="10">
+         <children>
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" style="-fx-background-color: #F7EFE2;">
+               <children>
+                  <Button fx:id="insertB" layoutX="152.0" layoutY="5.0" mnemonicParsing="false" text="INSERT" />
+                  <Button fx:id="removeB" layoutX="355.0" layoutY="5.0" mnemonicParsing="false" text="REMOVE" />
+                  <Button fx:id="searchB" layoutX="567.0" layoutY="5.0" mnemonicParsing="false" text="SEARCH" />
+                  <TextField fx:id="FIELDINSERT" layoutX="3.0" layoutY="5.0" />
+                  <TextField fx:id="FIELDREMOVE" layoutX="206.0" layoutY="5.0" prefHeight="25.0" prefWidth="149.0" />
+                  <TextField fx:id="FIELDSEARCH" layoutX="418.0" layoutY="5.0" />
+                  <TextArea fx:id="RESULT" layoutX="328.0" layoutY="186.0" prefHeight="200.0" prefWidth="200.0" />
+                  <Text layoutX="362.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OPERATION RESULT" wrappingWidth="169.13671875" />
+                  <TextArea fx:id="VALUES" layoutX="3.0" layoutY="31.0" prefHeight="369.0" prefWidth="315.0" />
+                  <Text layoutX="31.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="INDEXES" wrappingWidth="87.13671875" />
+                  <Text layoutX="193.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VALUES" wrappingWidth="87.13671565055847" />
+                  <Button fx:id="CLEAR" layoutX="640.0" layoutY="6.0" mnemonicParsing="false" text="CLEAR" />
+               </children>
+            </AnchorPane>
+         </children>
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+      </GridPane>
+   </children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>
