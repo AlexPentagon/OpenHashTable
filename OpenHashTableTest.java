@@ -53,7 +53,7 @@ class OpenHashTableTest {
         hashTable.add(6);
         int expected = 3;
         while(iterator.hasNext()){
-            assertEquals(iterator.next(),String.valueOf(expected));
+            assertEquals(iterator.next(),expected);
             expected++;
         }
     }

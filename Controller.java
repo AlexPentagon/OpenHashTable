@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 
+import com.sun.org.apache.regexp.internal.RE;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -53,9 +55,6 @@ public class Controller {
     void initialize() {
 
         insertB.setOnAction(event -> {
-            for(int i = 0;i < 1000;i++){
-                hashTable.add(i);
-            }
             RESULT.clear();
             hashTable.add((String.valueOf(FIELDINSERT.getCharacters())));
             RESULT.appendText("Now size is: " + (hashTable.size()) +
@@ -66,25 +65,28 @@ public class Controller {
             RESULT.clear();
             Integer index = ( hashTable.searchIndex((String.valueOf(FIELDSEARCH.getCharacters()))));
             Object o = hashTable.search(String.valueOf(FIELDSEARCH.getCharacters()));
+            RESULT.appendText("Now size is: " + hashTable.size());
 
-            if(o == null) RESULT.appendText("Can't search: " + String.valueOf(FIELDSEARCH.getCharacters()));
-            else RESULT.appendText("Now size is: " + hashTable.size() + "\nSearched: " + o);
+            if(o == null) RESULT.appendText("\nCan't search: " + String.valueOf(FIELDSEARCH.getCharacters()));
+            else RESULT.appendText("\nSearched: " + o);
 
             showTable(true,index);
 
         });
         removeB.setOnAction(event -> {
             RESULT.clear();
-            if(hashTable.remove(String.valueOf(FIELDREMOVE.getCharacters())))
-            RESULT.appendText("Now size is: " + (hashTable.size() +
-                    "\nRemoved: " + String.valueOf(FIELDREMOVE.getCharacters())));
-            else RESULT.appendText( "Now size is: " + (hashTable.size() + "\nTable does not contain " +
-                    String.valueOf(FIELDREMOVE.getCharacters())));
+            boolean b = hashTable.remove(String.valueOf(FIELDREMOVE.getCharacters()));
+            RESULT.appendText("Now size is: " + (hashTable.size()));
+            if(b)
+            RESULT.appendText("\nRemoved: " + String.valueOf(FIELDREMOVE.getCharacters()));
+            else RESULT.appendText("\nTable does not contain " + String.valueOf(FIELDREMOVE.getCharacters()));
             showTable(false,null);
         });
         CLEAR.setOnAction(event -> {
+            RESULT.clear();
             hashTable.clear();
             showTable(false,null);
+            RESULT.appendText("Now size is: " + (hashTable.size() + "\nTable Cleared!"));
         });
 
 
@@ -105,7 +107,7 @@ public class Controller {
         VALUES.clear();
         for(int i = 0; i < hashTable.table.length;i++){
             VALUES.appendText("\n" + i + spaceMaker(i));
-            if(hashTable.deleted[i]) VALUES.appendText(null);
+            if(hashTable.deleted[i]) VALUES.appendText("null");
             else VALUES.appendText("" + hashTable.table[i]);
             if(isSearch && (index == i && !hashTable.deleted[index])) VALUES.appendText("  Searched!");
         }
@@ -121,7 +123,7 @@ public class Controller {
         for(int i = 0;i < n;i++){
             result = result.substring(0,result.length()-2);
         }
-        return result.toString();
+        return result;
     }
 
 

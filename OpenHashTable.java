@@ -95,13 +95,12 @@ public class OpenHashTable<T> implements Set {
     @Override
     public boolean add(Object value) {
         if(value == null) throw new NullPointerException();
-        value = value.toString();
         int x = value.hashCode() %(table.length - 1) + 1;
         int y = value.hashCode()*31 % table.length;
         for(int i = 0;i < table.length;i++){
             if(x < 0) x *= -1;
             if(table[x] == null || deleted[x]){
-                table[x] = (T) value.toString();
+                table[x] = (T) value;
                 deleted[x] = false;
                 size++;
                 if((float)size / table.length > loadFactor) resize();
@@ -116,7 +115,6 @@ public class OpenHashTable<T> implements Set {
     @Override
     public boolean remove(Object value) {
         if(value == null) throw new NullPointerException();
-        value = value.toString();
        int x = value.hashCode() %(table.length - 1) + 1;
        int y = value.hashCode()*31 % table.length;
         for(int i = 0;i < table.length;i++){
@@ -229,7 +227,6 @@ public class OpenHashTable<T> implements Set {
 
     public Integer searchIndex(Object value){
         if(value == null) throw new NullPointerException();
-        value = value.toString();
         int x = value.hashCode() %(table.length - 1) + 1;
         int y = value.hashCode()*31 % table.length;
         for(int i = 0;i < table.length;i++){
