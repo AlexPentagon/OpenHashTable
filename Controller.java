@@ -56,18 +56,21 @@ public class Controller {
 
         insertB.setOnAction(event -> {
             RESULT.clear();
-            hashTable.add((String.valueOf(FIELDINSERT.getCharacters())));
-            RESULT.appendText("Now size is: " + (hashTable.size()) +
-                            "\nInserted: " + String.valueOf(FIELDINSERT.getCharacters()));
+            String s = String.valueOf(FIELDINSERT.getCharacters());
+            boolean b = hashTable.add(s);
+            RESULT.appendText("Now size is: " + (hashTable.size()));
+            if(b) RESULT.appendText("\nInserted: " + s);
+            else RESULT.appendText("\nCan't insert: " + s);
             showTable(false,null);
         });
         searchB.setOnAction(event -> {
             RESULT.clear();
-            Integer index = ( hashTable.searchIndex((String.valueOf(FIELDSEARCH.getCharacters()))));
-            Object o = hashTable.search(String.valueOf(FIELDSEARCH.getCharacters()));
+            String s = String.valueOf(FIELDSEARCH.getCharacters());
+            Integer index = ( hashTable.searchIndex(s));
+            Object o = hashTable.search(s);
             RESULT.appendText("Now size is: " + hashTable.size());
 
-            if(o == null) RESULT.appendText("\nCan't search: " + String.valueOf(FIELDSEARCH.getCharacters()));
+            if(o == null) RESULT.appendText("\nCan't search: " + s);
             else RESULT.appendText("\nSearched: " + o);
 
             showTable(true,index);
@@ -75,11 +78,11 @@ public class Controller {
         });
         removeB.setOnAction(event -> {
             RESULT.clear();
-            boolean b = hashTable.remove(String.valueOf(FIELDREMOVE.getCharacters()));
+            String s = String.valueOf(FIELDREMOVE.getCharacters());
+            boolean b = hashTable.remove(s);
             RESULT.appendText("Now size is: " + (hashTable.size()));
-            if(b)
-            RESULT.appendText("\nRemoved: " + String.valueOf(FIELDREMOVE.getCharacters()));
-            else RESULT.appendText("\nTable does not contain " + String.valueOf(FIELDREMOVE.getCharacters()));
+            if(b) RESULT.appendText("\nRemoved: " + s);
+            else RESULT.appendText("\nTable does not contain: " + s);
             showTable(false,null);
         });
         CLEAR.setOnAction(event -> {
@@ -102,13 +105,12 @@ public class Controller {
     }
 
     public void showTable(boolean isSearch,Integer index){
-
-
+        String space = "          ";
         VALUES.clear();
         for(int i = 0; i < hashTable.table.length;i++){
             VALUES.appendText("\n" + i + spaceMaker(i));
-            if(hashTable.deleted[i]) VALUES.appendText("null");
-            else VALUES.appendText("" + hashTable.table[i]);
+            if(hashTable.deleted[i]) VALUES.appendText(hashTable.deleted[i]+ space + " " + hashTable.table[i]);
+            else VALUES.appendText(hashTable.deleted[i]+ space + hashTable.table[i]);
             if(isSearch && (index == i && !hashTable.deleted[index])) VALUES.appendText("  Searched!");
         }
     }

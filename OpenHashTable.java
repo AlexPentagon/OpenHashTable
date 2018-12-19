@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class OpenHashTable<T> implements Set {
+public class OpenHashTable<T> implements Set<T> {
     T[] table;
     boolean[] deleted;
     private float loadFactor = 0.75f;
@@ -17,9 +17,6 @@ public class OpenHashTable<T> implements Set {
         deleted = new boolean[16];
     }
 
-    public T[] getTable(){
-        return table;
-    }
 
     @Override
     public int size() {
@@ -28,24 +25,22 @@ public class OpenHashTable<T> implements Set {
 
     @Override
     public boolean isEmpty() {
-        if(size == 0) return true;
-        else return false;
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
         if(o == null) throw new NullPointerException();
-        if(search(o) != null && !deleted[searchIndex(o)]) return true;
-        else return false;
+        return searchIndex(o) != -1;
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
         return new OpenHashTableIterator();
 
     }
 //______________________________________________________________________________________________________________________
-    class OpenHashTableIterator implements Iterator{
+    class OpenHashTableIterator implements Iterator<T> {
         int currentIndex;
         OpenHashTableIterator(){
             currentIndex = 0;
@@ -54,14 +49,11 @@ public class OpenHashTable<T> implements Set {
         @Override
         public boolean hasNext() {
             int o = findNext();
-            if (o != -1){
-                return true;
-            }
-            return false;
+            return o != -1;
         }
 
         @Override
-        public Object next() {
+        public T next() {
            int o = findNext();
            if (o != -1){
                currentIndex = o + 1;
@@ -83,24 +75,25 @@ public class OpenHashTable<T> implements Set {
     @Override
     public Object[] toArray() {
         Object[] result = new Object[size];
-        Iterator iterator = new OpenHashTableIterator();
         int j = 0;
-        while(iterator.hasNext()){
-            result[j] = iterator.next();
+        for (T elem : this) {
+            result[j] = elem;
             j++;
         }
         return result;
     }
 
     @Override
-    public boolean add(Object value) {
+    public boolean add(T value) {
         if(value == null) throw new NullPointerException();
-        int x = value.hashCode() %(table.length - 1) + 1;
-        int y = value.hashCode()*31 % table.length;
+        if(contains(value)) return false;
+
+        int x = value.hashCode()*31 % table.length;
+        int y = value.hashCode() %(table.length - 1) + 1;
         for(int i = 0;i < table.length;i++){
             if(x < 0) x *= -1;
             if(table[x] == null || deleted[x]){
-                table[x] = (T) value;
+                table[x] = value;
                 deleted[x] = false;
                 size++;
                 if((float)size / table.length > loadFactor) resize();
@@ -112,57 +105,74 @@ public class OpenHashTable<T> implements Set {
     }
 // value%(size - 1) + 1;
 // value.hashcode()*31 % size
+
+
     @Override
     public boolean remove(Object value) {
-        if(value == null) throw new NullPointerException();
-       int x = value.hashCode() %(table.length - 1) + 1;
-       int y = value.hashCode()*31 % table.length;
-        for(int i = 0;i < table.length;i++){
-            if(x < 0) x *= -1;
-            if(table[x] != null){
-                if(table[x].equals(value)) {
-                    if(deleted[x]){
-                        x = (x + i * y) % table.length;
-                        continue;
-                    }
-                    deleted[x] = true;
-                    size--;
-                    return true;
-                }
-            }else return false;
-            x = (x + i * y) % table.length;
+//        if(value == null) throw new NullPointerException();
+//       int x = value.hashCode()*31 % table.length;
+//       int y = value.hashCode() %(table.length - 1) + 1;
+//        for(int i = 0;i < table.length;i++){
+//            if(x < 0) x *= -1;
+//            if(table[x] != null){
+//                if(table[x].equals(value)) {
+//                    if(deleted[x]){
+//                        x = (x + i * y) % table.length;
+//                        continue;
+//                    }
+//                    deleted[x] = true;
+//                    size--;
+//                    return true;
+//                }
+//            }else return false;
+//            x = (x + i * y) % table.length;
+//        }
+//        return false;
+        Integer index = searchIndex(value);
+        if(index == -1) return false;
+        else {
+            deleted[index] = true;
+            size--;
+            return true;
         }
-        return true;
     }
 
     @Override
-    public boolean addAll(Collection c) {
-        for(Object o : c){
+    public boolean addAll(Collection<? extends T> c) {
+        for(T o : c){
+            if(contains(o)) return false;
+        }
+        for(T o : c){
             add(o);
         }
         return true;
     }
 
-    public boolean addAllArr(Object[] objects) {
-        for(Object o : objects){
-            if(o != null)add(o);
+    public boolean addAllArr(T[] objects,boolean[] deleted) {
+        boolean result = true;
+        List<Object> toDelete = new ArrayList<>();
+        for(int i = 0;i < objects.length;i++){
+            if(objects[i] != null)result = add(objects[i]);
+            if(deleted[i]) toDelete.add(objects[i]);
         }
-        return true;
+        removeAll(toDelete);
+
+        return result;
     }
 
     @Override
     public void clear() {
         int capacity = table.length;
         table = (T[]) new Object[capacity];
+        deleted = new boolean[capacity];
         size = 0;
     }
 
     @Override
     public boolean equals(Object o) {
-        OpenHashTable ht = (OpenHashTable) o;
-         Object[] oTable = ht.getTable();
-        for (int i = 0; i < table.length;i++){
-            if(table[i] != null && !table[i].equals(oTable[i])) return false;
+        if (!(o instanceof Set)) return false;
+        for (T object : this){
+            if(!((Set) o).contains(object)) return false;
         }
         return true;
     }
@@ -171,13 +181,13 @@ public class OpenHashTable<T> implements Set {
     public int hashCode() {
         int result = 0;
         for(Object o : table){
-            if(o != null) result += o.hashCode();
+            if(o != null && !deleted[searchIndex(o)]) result += o.hashCode();
         }
         return result;
     }
 
     @Override
-    public boolean removeAll(Collection c) {
+    public boolean removeAll(Collection<?> c) {
         for(Object o : c){
             remove(o);
         }
@@ -185,10 +195,10 @@ public class OpenHashTable<T> implements Set {
     }
 
     @Override
-    public boolean retainAll(Collection c) {
-        List<Object> list = new ArrayList<>();
+    public boolean retainAll(Collection<?> c) {
+        List<T> list = new ArrayList<>();
         for(Object o : c){
-            if(contains(o))list.add(o);
+            if(contains(o))list.add((T)o);
         }
         clear();
         addAll(list);
@@ -196,7 +206,7 @@ public class OpenHashTable<T> implements Set {
     }
 
     @Override
-    public boolean containsAll(Collection c) {
+    public boolean containsAll(Collection<?> c) {
         for (Object o : c){
             if(!contains(o)) return false;
         }
@@ -217,18 +227,19 @@ public class OpenHashTable<T> implements Set {
     private void resize(){
         int length = table.length;
         int capacity = length * 2;
-        Object[] copy = table;
+        T[] copyT = table;
+        boolean[] copyD = deleted;
 
         table = (T[])new Object[capacity];
         deleted = new boolean[capacity];
         size = 0;
-        addAllArr(copy);
+        addAllArr(copyT,copyD);
     }
 
     public Integer searchIndex(Object value){
         if(value == null) throw new NullPointerException();
-        int x = value.hashCode() %(table.length - 1) + 1;
-        int y = value.hashCode()*31 % table.length;
+        int x = value.hashCode()*31 % table.length;
+        int y = value.hashCode() %(table.length - 1) + 1;
         for(int i = 0;i < table.length;i++){
             if(x < 0) x *= -1;
             if(table[x] != null){

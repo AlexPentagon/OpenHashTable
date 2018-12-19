@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OpenHashTableTest {
 
-    OpenHashTable hashTable = new OpenHashTable();
+    OpenHashTable<Object> hashTable = new OpenHashTable<>();
 
     @org.junit.jupiter.api.Test
     void size() {
@@ -49,12 +49,12 @@ class OpenHashTableTest {
         assertNull(iterator.next());
         hashTable.add(3);
         hashTable.add(4);
-        hashTable.add(5);
         hashTable.add(6);
-        int expected = 3;
+        hashTable.add(5);
+        int expected = 6;
         while(iterator.hasNext()){
             assertEquals(iterator.next(),expected);
-            expected++;
+            expected--;
         }
     }
 
@@ -65,10 +65,10 @@ class OpenHashTableTest {
         hashTable.add("b");
         hashTable.add("c");
         hashTable.add("d");
-        arr[0] = "a";
-        arr[1] = "b";
-        arr[2] = "c";
-        arr[3] = "d";
+        arr[0] = "d";
+        arr[1] = "c";
+        arr[2] = "b";
+        arr[3] = "a";
         for(int i = 0;i < 4;i++) {
             assertEquals(hashTable.toArray()[i], arr[i]);
         }
@@ -81,9 +81,9 @@ class OpenHashTableTest {
         hashTable.add("c");
         hashTable.add("d");
         assertEquals(4,hashTable.size());
-        hashTable.add("c");
-        assertTrue(hashTable.add("d"));
-        assertEquals(6,hashTable.size());
+        assertFalse(hashTable.add("c"));
+        assertFalse(hashTable.add("d"));
+        assertEquals(4,hashTable.size());
         try{
             hashTable.add(null);
         }catch (NullPointerException e){ }
@@ -106,7 +106,7 @@ class OpenHashTableTest {
 
     @org.junit.jupiter.api.Test
     void addAll() {
-        List arr = new ArrayList<Object>();
+        List<Object> arr = new ArrayList<>();
         arr.add("a");
         arr.add("b");
         arr.add("c");
@@ -133,15 +133,31 @@ class OpenHashTableTest {
 
     @org.junit.jupiter.api.Test
     void equals() {
-        OpenHashTable ht = new OpenHashTable();
+        OpenHashTable<String> ht = new OpenHashTable<>();
         hashTable.add("a");
         hashTable.add("b");
         hashTable.add("c");
         hashTable.add("d");
-        ht.add("a");
-        ht.add("b");
-        ht.add("c");
+        hashTable.add("e");
+        hashTable.add("f");
+        hashTable.add("g");
+        hashTable.add("h");
+        hashTable.add("i");
+        hashTable.add("j");
+        hashTable.add("k");
+        hashTable.add("l");
+        ht.add("l");
+        ht.add("k");
+        ht.add("j");
+        ht.add("i");
+        ht.add("h");
+        ht.add("g");
+        ht.add("f");
+        ht.add("e");
         ht.add("d");
+        ht.add("c");
+        ht.add("b");
+        ht.add("a");
         assertTrue(hashTable.equals(ht));
     }
 
